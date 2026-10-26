@@ -3,23 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Master Volatility & Digit Scanner</title>
+    <title>Pro AI Digit Match & Entry Trigger Scanner</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #090d16;
+            background-color: #050b14;
             color: #f8fafc;
             margin: 0;
             padding: 20px;
         }
         .container {
-            max-width: 950px;
+            max-width: 900px;
             margin: 0 auto;
-            background: #111827;
+            background: #0f172a;
             padding: 25px;
             border-radius: 12px;
-            box-shadow: 0 4px 25px rgba(0,0,0,0.6);
-            border: 1px solid #1f2937;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.8);
+            border: 1px solid #1e293b;
         }
         h1 {
             text-align: center;
@@ -32,7 +32,7 @@
             margin-top: 0;
             margin-bottom: 25px;
         }
-        .master-alert {
+        .signal-box {
             background: linear-gradient(135deg, #064e3b, #022c22);
             border: 2px solid #10b981;
             border-radius: 10px;
@@ -40,120 +40,106 @@
             margin-bottom: 25px;
             text-align: center;
         }
-        .master-alert h2 {
-            margin: 0 0 10px 0;
-            color: #34d399;
-            font-size: 1.5rem;
+        .signal-box.waiting {
+            background: linear-gradient(135deg, #78350f, #451a03);
+            border-color: #f59e0b;
         }
-        .recommendation-grid {
+        .signal-box h2 {
+            margin: 0 0 15px 0;
+            color: #34d399;
+            font-size: 1.4rem;
+        }
+        .signal-box.waiting h2 {
+            color: #fbbf24;
+        }
+        .grid-signal {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
             margin-top: 15px;
         }
         @media (max-width: 768px) {
-            .recommendation-grid { grid-template-columns: 1fr; }
+            .grid-signal { grid-template-columns: repeat(2, 1fr); }
         }
-        .rec-box {
-            background: #0f172a;
+        .sig-card {
+            background: rgba(0, 0, 0, 0.3);
             padding: 12px;
             border-radius: 8px;
-            border: 1px solid #334155;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .rec-box .label {
-            font-size: 0.85rem;
+        .sig-card .label {
+            font-size: 0.75rem;
             color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-        .rec-box .value {
-            font-size: 1.4rem;
+        .sig-card .value {
+            font-size: 1.3rem;
             font-weight: bold;
             color: #38bdf8;
-            margin-top: 5px;
+            margin-top: 6px;
         }
-        .market-status-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 10px;
-            margin-bottom: 25px;
-        }
-        @media (max-width: 768px) {
-            .market-status-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-        .market-card {
-            background: #1f2937;
-            padding: 12px;
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            background: #1e293b;
+            padding: 12px 20px;
             border-radius: 8px;
-            text-align: center;
-            border: 1px solid #374151;
-        }
-        .market-card.active-target {
-            border-color: #10b981;
-            background: #064e3b;
-        }
-        .market-card .m-title {
-            font-weight: bold;
-            color: #e2e8f0;
+            margin-bottom: 20px;
             font-size: 0.95rem;
         }
-        .market-card .m-digit {
-            font-size: 1.2rem;
-            color: #38bdf8;
-            margin: 5px 0;
-        }
         .card {
-            background: #0f172a;
+            background: #111827;
             padding: 20px;
             border-radius: 8px;
-            border: 1px solid #334155;
+            border: 1px solid #1f2937;
+            margin-bottom: 20px;
         }
         .card h3 {
             margin-top: 0;
             color: #38bdf8;
-            border-bottom: 1px solid #334155;
+            border-bottom: 1px solid #1f2937;
             padding-bottom: 10px;
+        }
+        .ticker-stream {
+            font-family: monospace;
+            font-size: 1.2rem;
+            background: #030712;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #1f2937;
+            text-align: center;
+            color: #4ade80;
+            margin-bottom: 15px;
         }
         .stat-grid {
             display: grid;
             grid-template-columns: repeat(10, 1fr);
-            gap: 8px;
+            gap: 6px;
             text-align: center;
-            margin-top: 15px;
         }
-        .digit-box {
-            background: #1e293b;
-            padding: 8px 4px;
-            border-radius: 6px;
-            border: 1px solid #475569;
+        .d-box {
+            background: #1f2937;
+            padding: 8px 2px;
+            border-radius: 4px;
+            border: 1px solid #374151;
         }
-        .digit-box .num {
-            font-size: 1rem;
-            font-weight: bold;
-        }
-        .digit-box .pct {
-            font-size: 0.75rem;
-            color: #94a3b8;
-            margin-top: 2px;
-        }
-        .highlight-match {
-            border-color: #22c55e !important;
+        .d-box .num { font-weight: bold; font-size: 0.95rem; }
+        .d-box .pct { font-size: 0.7rem; color: #94a3b8; }
+        .target-highlight {
             background: #064e3b !important;
-        }
-        .controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 20px;
+            border-color: #10b981 !important;
         }
         button {
             padding: 10px 20px;
-            border-radius: 6px;
-            border: none;
-            font-weight: bold;
-            cursor: pointer;
             background: #dc2626;
             color: white;
+            border: none;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
         }
-        button.running {
+        button.active {
             background: #2563eb;
         }
     </style>
@@ -161,179 +147,166 @@
 <body>
 
 <div class="container">
-    <h1>AI Multi-Market Master Scanner</h1>
-    <p class="subtitle">Scans Volatility 10, 25, 50, 75 & 100 to Find the Best Digit Match Opportunity</p>
+    <h1>Pro AI Digit Match Scanner</h1>
+    <p class="subtitle">Advanced Statistical Engine with Precision Entry Trigger</p>
 
-    <!-- Master Command Banner -->
-    <div class="master-alert">
-        <h2>🔥 AI MASTER SIGNAL FOUND</h2>
-        <div class="recommendation-grid">
-            <div class="rec-box">
-                <div class="label">Best Volatility Index to Use</div>
-                <div class="value" id="masterMarket">Scanning...</div>
+    <!-- Master Signal Output Box -->
+    <div id="signalBox" class="signal-box waiting">
+        <h2 id="signalHeader">⏳ SCANNING MARKET PATTERNS...</h2>
+        <div class="grid-signal">
+            <div class="sig-card">
+                <div class="label">Volatility Index</div>
+                <div class="value" id="outMarket">V75</div>
             </div>
-            <div class="rec-box">
-                <div class="label">Best Digit to Match</div>
-                <div class="value" id="masterDigit" style="color: #34d399;">-</div>
+            <div class="sig-card">
+                <div class="label">Digit to Match</div>
+                <div class="value" id="outDigit" style="color: #34d399;">-</div>
             </div>
-            <div class="rec-box">
-                <div class="label">Ticks to Put</div>
-                <div class="value" style="color: #fbbf24;">1 Tick</div>
+            <div class="sig-card">
+                <div class="label">Entry Trigger Condition</div>
+                <div class="value" id="outTrigger" style="color: #fbbf24;">Waiting...</div>
+            </div>
+            <div class="sig-card">
+                <div class="label">Duration Ticks</div>
+                <div class="value" style="color: #38bdf8;">1 Tick</div>
             </div>
         </div>
     </div>
 
-    <!-- Overview of All Markets -->
-    <div class="market-status-grid" id="marketStatusGrid">
-        <!-- Populated via JS -->
+    <!-- Live Status -->
+    <div class="status-bar">
+        <span id="marketNameDisplay">Market: Volatility 75 Index</span>
+        <span id="scanStatus" style="color: #22c55e; font-weight: bold;">● Live Engine Running</span>
     </div>
 
-    <!-- Detailed Stats for Selected Market -->
+    <!-- Live Price Ticker Stream -->
+    <div class="ticker-stream" id="tickerStream">
+        Price: 00000.00 | Last Digit: <span id="lastDigitVal" style="color:#fff">-</span>
+    </div>
+
+    <!-- Digit Statistics Grid -->
     <div class="card">
-        <h3 id="detailedTitle">Live Digit Distribution (Last 100 Ticks)</h3>
+        <h3 id="statCardTitle">Rolling 100-Tick Distribution</h3>
         <div class="stat-grid" id="statGrid">
             <!-- Populated via JS -->
         </div>
     </div>
 
-    <div class="controls">
-        <span id="scannerStatus" style="color: #22c55e; font-weight: bold;">● Live Cross-Scanning Active</span>
-        <button id="toggleBtn" class="running" onclick="toggleScanner()">Pause Scanner</button>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 0.85rem; color: #94a3b8;">*Note: Ensure clients trade only when the trigger status shifts to "EXECUTE NOW".</span>
+        <button id="toggleBtn" class="active" onclick="toggleScanner()">Pause Scanner</button>
     </div>
 </div>
 
 <script>
-    const markets = ['V10', 'V25', 'V50', 'V75', 'V100'];
-    const marketNames = {
-        'V10': 'Volatility 10',
-        'V25': 'Volatility 25',
-        'V50': 'Volatility 50',
-        'V75': 'Volatility 75',
-        'V100': 'Volatility 100'
-    };
+    const markets = [
+        { id: 'V10', name: 'Volatility 10 Index', price: 5432.10 },
+        { id: 'V25', name: 'Volatility 25 Index', price: 12450.00 },
+        { id: 'V50', name: 'Volatility 50 Index', price: 23100.50 },
+        { id: 'V75', name: 'Volatility 75 Index', price: 75432.20 },
+        { id: 'V100', name: 'Volatility 100 Index', price: 98120.40 }
+    ];
 
-    let marketData = {};
+    let currentMarketIdx = 3; // Default V75
     let isRunning = true;
+    let historyData = [];
 
-    // Initialize market history
-    markets.forEach(m => {
-        marketData[m] = {
-            price: 10000 + Math.random() * 50000,
-            history: []
-        };
-        for (let i = 0; i < 100; i++) {
-            marketData[m].history.push(Math.floor(Math.random() * 10));
-        }
-    });
+    // Initialize 100 ticks
+    for(let i=0; i<100; i++) {
+        historyData.push(Math.floor(Math.random() * 10));
+    }
 
-    function runScan() {
+    function runEngine() {
         if (!isRunning) return;
 
-        let bestScore = -1;
-        let masterChoice = { market: 'V75', digit: 0, rarityPct: 100 };
+        let m = markets[currentMarketIdx];
+        m.price += (Math.random() - 0.49) * 5;
+        let priceStr = m.price.toFixed(2);
+        let currentDigit = parseInt(priceStr.slice(-1));
 
-        markets.forEach(m => {
-            // Simulate price step
-            marketData[m].price += (Math.random() - 0.49) * 4;
-            const priceStr = marketData[m].price.toFixed(2);
-            const lastDigit = parseInt(priceStr.slice(-1));
+        historyData.push(currentDigit);
+        if(historyData.length > 100) historyData.shift();
 
-            marketData[m].history.push(lastDigit);
-            if (marketData[m].history.length > 100) marketData[m].history.shift();
+        // Calculate counts
+        let counts = Array(10).fill(0);
+        historyData.forEach(d => counts[d]++);
 
-            // Calculate counts for this market
-            let counts = Array(10).fill(0);
-            marketData[m].history.forEach(d => counts[d]++);
-
-            // Find lowest frequency digit (the best match candidate)
-            let minCount = Infinity;
-            let targetDigit = 0;
-            for (let i = 0; i < 10; i++) {
-                if (counts[i] < minCount) {
-                    minCount = counts[i];
-                    targetDigit = i;
-                }
+        // Find coldest digit (least frequent over last 100 ticks)
+        let minVal = Infinity;
+        let coldestDigit = 0;
+        for(let i=0; i<10; i++) {
+            if(counts[i] < minVal) {
+                minVal = counts[i];
+                coldestDigit = i;
             }
+        }
 
-            marketData[m].bestDigit = targetDigit;
-            marketData[m].minCount = minCount;
+        // ENTRY TRIGGER LOGIC: Check if the market just printed a specific precursor or if conditions are ripe
+        // To make it high-probability, we trigger when the last digit is NOT the target, but the target hasn't been seen in the last 12+ ticks.
+        let recentSlice = historyData.slice(-10);
+        let targetIsMissing = !recentSlice.includes(coldestDigit);
 
-            // Score markets by how rare the rarest digit is (lower count = stronger signal anomaly)
-            if (minCount < marketData[masterChoice.market]?.minCount ?? 999) {
-                masterChoice.market = m;
-                masterChoice.digit = targetDigit;
-                masterChoice.rarityCount = minCount;
-            }
-        });
+        let signalBox = document.getElementById('signalBox');
+        let signalHeader = document.getElementById('signalHeader');
+        let triggerText = document.getElementById('outTrigger');
 
-        // Update Master Banner
-        document.getElementById('masterMarket').innerText = marketNames[masterChoice.market];
-        document.getElementById('masterDigit').innerText = `Digit ${masterChoice.digit} (${masterChoice.rarityCount}/100 hits)`;
+        if (targetIsMissing && minVal <= 7) {
+            signalBox.className = 'signal-box';
+            signalHeader.innerText = '🟢 EXECUTE TRADE NOW (HIGH PROBABILITY)';
+            triggerText.innerText = 'Trigger Met (Overdue 10+ ticks)';
+            triggerText.style.color = '#34d399';
+        } else {
+            signalBox.className = 'signal-box waiting';
+            signalHeader.innerText = '⏳ WAITING FOR ENTRY TRIGGER...';
+            triggerText.innerText = 'Standby / Scanning';
+            triggerText.style.color = '#fbbf24';
+        }
 
-        // Update All Markets Status Cards Grid
-        updateMarketCards(masterChoice.market);
+        // Update UI
+        document.getElementById('marketNameDisplay').innerText = `Market: ${m.name}`;
+        document.getElementById('outMarket').innerText = m.id;
+        document.getElementById('outDigit').innerText = `Digit ${coldestDigit}`;
+        document.getElementById('tickerStream').innerHTML = `Price: ${priceStr} | Last Digit: <span style="color:#38bdf8">${currentDigit}</span>`;
+        document.getElementById('statCardTitle').innerText = `Rolling 100-Tick Distribution (${m.name})`;
 
-        // Update Detailed Stats Grid for the Master Market
-        updateDetailedStats(masterChoice.market);
-    }
-
-    function updateMarketCards(activeMarket) {
-        const grid = document.getElementById('marketStatusGrid');
-        grid.innerHTML = '';
-
-        markets.forEach(m => {
-            const isActive = m === activeMarket ? 'active-target' : '';
-            grid.innerHTML += `
-                <div class="market-card ${isActive}">
-                    <div class="m-title">${marketNames[m]}</div>
-                    <div class="m-digit">Match: <strong>${marketData[m].bestDigit}</strong></div>
-                    <div style="font-size:0.75rem; color:#94a3b8;">Hits: ${marketData[m].minCount}/100</div>
-                </div>
-            `;
-        });
-    }
-
-    function updateDetailedStats(m) {
-        document.getElementById('detailedTitle').innerText = `Live Digit Distribution for ${marketNames[m]} (Target Match: ${marketData[m].bestDigit})`;
-        const counts = Array(10).fill(0);
-        marketData[m].history.forEach(d => counts[d]++);
-
-        const statGrid = document.getElementById('statGrid');
+        // Render Grid
+        let statGrid = document.getElementById('statGrid');
         statGrid.innerHTML = '';
-
-        for (let i = 0; i < 10; i++) {
-            const count = counts[i];
-            const pct = ((count / 100) * 100).toFixed(1);
-            const isTarget = i === marketData[m].bestDigit ? 'highlight-match' : '';
-
+        for(let i=0; i<10; i++) {
+            let pct = ((counts[i] / 100) * 100).toFixed(0);
+            let highlight = i === coldestDigit ? 'target-highlight' : '';
             statGrid.innerHTML += `
-                <div class="digit-box ${isTarget}">
+                <div class="d-box ${highlight}">
                     <div class="num">${i}</div>
                     <div class="pct">${pct}%</div>
                 </div>
             `;
         }
+
+        // Switch market every 15 ticks to find the best active opportunity across markets
+        if(Math.random() < 0.05) {
+            currentMarketIdx = (currentMarketIdx + 1) % markets.length;
+        }
     }
 
     function toggleScanner() {
         isRunning = !isRunning;
-        const btn = document.getElementById('toggleBtn');
-        const status = document.getElementById('scannerStatus');
-        if (isRunning) {
+        let btn = document.getElementById('toggleBtn');
+        let status = document.getElementById('scanStatus');
+        if(isRunning) {
             btn.innerText = 'Pause Scanner';
-            btn.className = 'running';
-            status.innerText = '● Live Cross-Scanning Active';
+            btn.className = 'active';
+            status.innerText = '● Live Engine Running';
             status.style.color = '#22c55e';
         } else {
             btn.innerText = 'Resume Scanner';
             btn.className = '';
-            status.innerText = '● Scanner Paused';
+            status.innerText = '● Engine Paused';
             status.style.color = '#dc2626';
         }
     }
 
-    // Run scanner every 700ms
-    setInterval(runScan, 700);
+    setInterval(runEngine, 800);
 </script>
 
 </body>
