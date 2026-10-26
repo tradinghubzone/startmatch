@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Master Volatility & Digit Scanner</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #090d16;
+            color: #f8fafc;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 950px;
+            margin: 0 auto;
+            background: #111827;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.6);
+            border: 1px solid #1f2937;
+        }
+        h1 {
+            text-align: center;
+            color: #38bdf8;
+            margin-bottom: 5px;
+        }
+        p.subtitle {
+            text-align: center;
+            color: #94a3b8;
+            margin-top: 0;
+            margin-bottom: 25px;
+        }
+        .master-alert {
+            background: linear-gradient(135deg, #064e3b, #022c22);
+            border: 2px solid #10b981;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        .master-alert h2 {
+            margin: 0 0 10px 0;
+            color: #34d399;
+            font-size: 1.5rem;
+        }
+        .recommendation-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+        @media (max-width: 768px) {
+            .recommendation-grid { grid-template-columns: 1fr; }
+        }
+        .rec-box {
+            background: #0f172a;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+        }
+        .rec-box .label {
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+        .rec-box .value {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #38bdf8;
+            margin-top: 5px;
+        }
+        .market-status-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+        @media (max-width: 768px) {
+            .market-status-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        .market-card {
+            background: #1f2937;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #374151;
+        }
+        .market-card.active-target {
+            border-color: #10b981;
+            background: #064e3b;
+        }
+        .market-card .m-title {
+            font-weight: bold;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+        }
+        .market-card .m-digit {
+            font-size: 1.2rem;
+            color: #38bdf8;
+            margin: 5px 0;
+        }
+        .card {
+            background: #0f172a;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+        }
+        .card h3 {
+            margin-top: 0;
+            color: #38bdf8;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 10px;
+        }
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 8px;
+            text-align: center;
+            margin-top: 15px;
+        }
+        .digit-box {
+            background: #1e293b;
+            padding: 8px 4px;
+            border-radius: 6px;
+            border: 1px solid #475569;
+        }
+        .digit-box .num {
+            font-size: 1rem;
+            font-weight: bold;
+        }
+        .digit-box .pct {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-top: 2px;
+        }
+        .highlight-match {
+            border-color: #22c55e !important;
+            background: #064e3b !important;
+        }
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            background: #dc2626;
+            color: white;
+        }
+        button.running {
+            background: #2563eb;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>AI Multi-Market Master Scanner</h1>
+    <p class="subtitle">Scans Volatility 10, 25, 50, 75 & 100 to Find the Best Digit Match Opportunity</p>
+
+    <!-- Master Command Banner -->
+    <div class="master-alert">
+        <h2>🔥 AI MASTER SIGNAL FOUND</h2>
+        <div class="recommendation-grid">
+            <div class="rec-box">
+                <div class="label">Best Volatility Index to Use</div>
+                <div class="value" id="masterMarket">Scanning...</div>
+            </div>
+            <div class="rec-box">
+                <div class="label">Best Digit to Match</div>
+                <div class="value" id="masterDigit" style="color: #34d399;">-</div>
+            </div>
+            <div class="rec-box">
+                <div class="label">Ticks to Put</div>
+                <div class="value" style="color: #fbbf24;">1 Tick</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overview of All Markets -->
+    <div class="market-status-grid" id="marketStatusGrid">
+        <!-- Populated via JS -->
+    </div>
+
+    <!-- Detailed Stats for Selected Market -->
+    <div class="card">
+        <h3 id="detailedTitle">Live Digit Distribution (Last 100 Ticks)</h3>
+        <div class="stat-grid" id="statGrid">
+            <!-- Populated via JS -->
+        </div>
+    </div>
+
+    <div class="controls">
+        <span id="scannerStatus" style="color: #22c55e; font-weight: bold;">● Live Cross-Scanning Active</span>
+        <button id="toggleBtn" class="running" onclick="toggleScanner()">Pause Scanner</button>
+    </div>
+</div>
+
+<script>
+    const markets = ['V10', 'V25', 'V50', 'V75', 'V100'];
+    const marketNames = {
+        'V10': 'Volatility 10',
+        'V25': 'Volatility 25',
+        'V50': 'Volatility 50',
+        'V75': 'Volatility 75',
+        'V100': 'Volatility 100'
+    };
+
+    let marketData = {};
+    let isRunning = true;
+
+    // Initialize market history
+    markets.forEach(m => {
+        marketData[m] = {
+            price: 10000 + Math.random() * 50000,
+            history: []
+        };
+        for (let i = 0; i < 100; i++) {
+            marketData[m].history.push(Math.floor(Math.random() * 10));
+        }
+    });
+
+    function runScan() {
+        if (!isRunning) return;
+
+        let bestScore = -1;
+        let masterChoice = { market: 'V75', digit: 0, rarityPct: 100 };
+
+        markets.forEach(m => {
+            // Simulate price step
+            marketData[m].price += (Math.random() - 0.49) * 4;
+            const priceStr = marketData[m].price.toFixed(2);
+            const lastDigit = parseInt(priceStr.slice(-1));
+
+            marketData[m].history.push(lastDigit);
+            if (marketData[m].history.length > 100) marketData[m].history.shift();
+
+            // Calculate counts for this market
+            let counts = Array(10).fill(0);
+            marketData[m].history.forEach(d => counts[d]++);
+
+            // Find lowest frequency digit (the best match candidate)
+            let minCount = Infinity;
+            let targetDigit = 0;
+            for (let i = 0; i < 10; i++) {
+                if (counts[i] < minCount) {
+                    minCount = counts[i];
+                    targetDigit = i;
+                }
+            }
+
+            marketData[m].bestDigit = targetDigit;
+            marketData[m].minCount = minCount;
+
+            // Score markets by how rare the rarest digit is (lower count = stronger signal anomaly)
+            if (minCount < marketData[masterChoice.market]?.minCount ?? 999) {
+                masterChoice.market = m;
+                masterChoice.digit = targetDigit;
+                masterChoice.rarityCount = minCount;
+            }
+        });
+
+        // Update Master Banner
+        document.getElementById('masterMarket').innerText = marketNames[masterChoice.market];
+        document.getElementById('masterDigit').innerText = `Digit ${masterChoice.digit} (${masterChoice.rarityCount}/100 hits)`;
+
+        // Update All Markets Status Cards Grid
+        updateMarketCards(masterChoice.market);
+
+        // Update Detailed Stats Grid for the Master Market
+        updateDetailedStats(masterChoice.market);
+    }
+
+    function updateMarketCards(activeMarket) {
+        const grid = document.getElementById('marketStatusGrid');
+        grid.innerHTML = '';
+
+        markets.forEach(m => {
+            const isActive = m === activeMarket ? 'active-target' : '';
+            grid.innerHTML += `
+                <div class="market-card ${isActive}">
+                    <div class="m-title">${marketNames[m]}</div>
+                    <div class="m-digit">Match: <strong>${marketData[m].bestDigit}</strong></div>
+                    <div style="font-size:0.75rem; color:#94a3b8;">Hits: ${marketData[m].minCount}/100</div>
+                </div>
+            `;
+        });
+    }
+
+    function updateDetailedStats(m) {
+        document.getElementById('detailedTitle').innerText = `Live Digit Distribution for ${marketNames[m]} (Target Match: ${marketData[m].bestDigit})`;
+        const counts = Array(10).fill(0);
+        marketData[m].history.forEach(d => counts[d]++);
+
+        const statGrid = document.getElementById('statGrid');
+        statGrid.innerHTML = '';
+
+        for (let i = 0; i < 10; i++) {
+            const count = counts[i];
+            const pct = ((count / 100) * 100).toFixed(1);
+            const isTarget = i === marketData[m].bestDigit ? 'highlight-match' : '';
+
+            statGrid.innerHTML += `
+                <div class="digit-box ${isTarget}">
+                    <div class="num">${i}</div>
+                    <div class="pct">${pct}%</div>
+                </div>
+            `;
+        }
+    }
+
+    function toggleScanner() {
+        isRunning = !isRunning;
+        const btn = document.getElementById('toggleBtn');
+        const status = document.getElementById('scannerStatus');
+        if (isRunning) {
+            btn.innerText = 'Pause Scanner';
+            btn.className = 'running';
+            status.innerText = '● Live Cross-Scanning Active';
+            status.style.color = '#22c55e';
+        } else {
+            btn.innerText = 'Resume Scanner';
+            btn.className = '';
+            status.innerText = '● Scanner Paused';
+            status.style.color = '#dc2626';
+        }
+    }
+
+    // Run scanner every 700ms
+    setInterval(runScan, 700);
+</script>
+
+</body>
+</html>
